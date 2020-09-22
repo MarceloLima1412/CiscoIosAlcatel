@@ -1,0 +1,673 @@
+#R21
+
+	en
+	conf t
+	
+	interface fa0/0
+	ip address 192.168.0.1 255.255.255.252
+	ip nat inside
+	service-policy input MARCAR
+	no shutdown
+	exit
+
+	interface fa2/0
+	ip address 212.55.128.22 255.255.255.252
+	ip nat inside
+	service-policy output QoS_Out
+	no shutdown
+	exit
+
+	interface fa2/1
+	ip address 212.55.128.26 255.255.255.252
+	ip nat outside
+	service-policy output QoS_Out
+	no shutdown
+	exit
+
+	interface loopback0
+	ip address 192.168.0.128 255.255.255.255
+	ip nat inside
+	no shutdown
+	exit
+
+	router bgp 202277 
+		neighbor 212.55.128.21 remote-as 3243 
+		address-family ipv4 
+			network 192.168.0.0 
+			neighbor 212.55.128.21 activate 
+			redistribute connected
+		exit-address-family
+	exit 
+
+    ip access-list extended 101
+	    permit ip 192.168.0.0 0.0.0.3 any
+	    permit ip 192.168.0.4 0.0.0.3 any
+	    permit ip 192.168.0.8 0.0.0.3 any
+  	ip nat inside source list 101 interface f2/0 overload
+
+  	line vty 0 4
+	transport input ssh
+	login local
+	ip domain-name cisco.com
+	crypto key generate rsa
+	username root password root	
+	enable secret root 
+
+  	class-map match-any Routing
+
+	match protocol bgp 
+	match protocol egp 
+	match protocol eigrp 
+	match protocol rip 
+	match protocol ospf 
+	match protocol bstun 
+	match protocol dhcp
+
+	exit
+
+	class-map match-any Voice
+
+	match protocol sip
+	match protocol h323
+	match protocol mgcp
+	match protocol rtp
+	match protocol rtcp
+	match protocol skype
+
+	exit
+
+	class-map match-any Video
+
+	match protocol h323
+	match protocol cuseeme
+	match protocol skype
+
+	exit
+
+	class-map match-any Streaming
+
+	match protocol http
+	match protocol rtp
+	match protocol rtsp
+
+	exit
+
+	class-map match-any MissionCritical
+
+	match protocol sqlserver
+	match protocol sqlnet
+
+	exit
+
+	class-map match-any CallSignal
+
+	match protocol sip
+	match protocol h323
+	match protocol mgcp
+	match protocol skinny
+
+	exit
+
+	class-map match-any Transactional
+
+	match protocol compressedtcp
+
+	exit
+
+	class-map match-any NetworkManagement
+
+	match protocol citrix
+	match protocol icmp
+	match protocol snmp
+	match protocol telnet
+	match protocol ssh
+	match protocol syslog
+
+	exit
+
+	class-map match-any Bulk
+
+	match protocol ftp
+	match protocol tftp
+	match protocol http
+
+	exit
+
+	class-map match-any Scavenger
+
+	match protocol gnutella
+	match protocol pptp
+	match protocol fasttrack
+
+	exit
+
+	class-map match-any BestEffort
+
+	match protocol clns
+	match protocol cmns
+	match protocol imap
+	match protocol pop3
+
+	exit
+
+	policy-map MARCAR 
+	class Routing
+	set ip dscp 48
+	exit
+	class Voice 
+	set ip dscp 46
+	exit
+	class Video
+	set ip dscp 34
+	exit
+	class Streaming
+	set ip dscp 32
+	exit
+	class MissionCritical
+	set ip dscp 26
+	exit
+	class CallSignal
+	set ip dscp 24
+	exit
+	class Transactional
+	set ip dscp 18
+	exit
+	class NetworkManagement
+	set ip dscp 16
+	exit
+	class Bulk
+	set ip dscp 10
+	exit
+	class Scavenger
+	set ip dscp 8
+	exit
+	class class-default
+	set ip dscp 0
+	exit
+	exit
+
+	class-map match-all QoS_RealTime  
+	match ip dscp 46 34 32
+	exit
+	class-map match-all QoS_CriticalData 
+	match ip dscp 48 26 24 18 16 10
+	exit
+	class-map match-all QoS_Scavenger  
+	match ip dscp 8
+	exit
+
+	policy-map QoS_Out
+
+	class QoS_RealTime
+	priority percent 10
+	exit
+
+	class QoS_CriticalData
+	bandwidth percent 20
+	exit
+
+	class QoS_Scavenger
+	police 100000
+	exit
+
+	class class-default
+	fair-queue
+	exit
+
+#R22
+
+	en
+	conf t
+
+	interface fa0/0
+	ip address 185.83.248.42 255.255.255.252
+	service-policy output QoS_Out
+	no shutdown
+	exit
+
+	interface fa2/0
+	ip address 192.168.0.5 255.255.255.252
+	service-policy input MARCAR
+	no shutdown
+	exit
+
+	interface loopback0
+	ip address 192.168.0.129 255.255.255.255
+	no shutdown
+	exit
+
+	router rip
+	version 2
+	redistribute connected
+	network 185.83.248.40
+	no auto-summary
+	exit
+
+	line vty 0 4
+	transport input ssh
+	login local
+	ip domain-name cisco.com
+	crypto key generate rsa
+	username root password root	
+	enable secret root 
+
+
+	class-map match-any Routing
+
+	match protocol bgp 
+	match protocol egp 
+	match protocol eigrp 
+	match protocol rip 
+	match protocol ospf 
+	match protocol bstun 
+	match protocol dhcp
+
+	exit
+
+	class-map match-any Voice
+
+	match protocol sip
+	match protocol h323
+	match protocol mgcp
+	match protocol rtp
+	match protocol rtcp
+	match protocol skype
+
+	exit
+
+	class-map match-any Video
+
+	match protocol h323
+	match protocol cuseeme
+	match protocol skype
+
+	exit
+
+	class-map match-any Streaming
+
+	match protocol http
+	match protocol rtp
+	match protocol rtsp
+
+	exit
+
+	class-map match-any MissionCritical
+
+	match protocol sqlserver
+	match protocol sqlnet
+
+	exit
+
+	class-map match-any CallSignal
+
+	match protocol sip
+	match protocol h323
+	match protocol mgcp
+	match protocol skinny
+
+	exit
+
+	class-map match-any Transactional
+
+	match protocol compressedtcp
+
+	exit
+
+	class-map match-any NetworkManagement
+
+	match protocol citrix
+	match protocol icmp
+	match protocol snmp
+	match protocol telnet
+	match protocol ssh
+	match protocol syslog
+
+	exit
+
+	class-map match-any Bulk
+
+	match protocol ftp
+	match protocol tftp
+	match protocol http
+
+	exit
+
+	class-map match-any Scavenger
+
+	match protocol gnutella
+	match protocol pptp
+	match protocol fasttrack
+
+	exit
+
+	class-map match-any BestEffort
+
+	match protocol clns
+	match protocol cmns
+	match protocol imap
+	match protocol pop3
+
+	exit
+
+
+	policy-map MARCAR 
+	class Routing
+	set ip dscp 48
+	exit
+	class Voice 
+	set ip dscp 46
+	exit
+	class Video
+	set ip dscp 34
+	exit
+	class Streaming
+	set ip dscp 32
+	exit
+	class MissionCritical
+	set ip dscp 26
+	exit
+	class CallSignal
+	set ip dscp 24
+	exit
+	class Transactional
+	set ip dscp 18
+	exit
+	class NetworkManagement
+	set ip dscp 16
+	exit
+	class Bulk
+	set ip dscp 10
+	exit
+	class Scavenger
+	set ip dscp 8
+	exit
+	class class-default
+	set ip dscp 0
+	exit
+	exit
+
+	class-map match-all QoS_RealTime  
+	match ip dscp 46 34 32
+	exit
+	class-map match-all QoS_CriticalData 
+	match ip dscp 48 26 24 18 16 10
+	exit
+	class-map match-all QoS_Scavenger  
+	match ip dscp 8
+	exit
+
+	policy-map QoS_Out
+
+	class QoS_RealTime
+	priority percent 10
+	exit
+
+	class QoS_CriticalData
+	bandwidth percent 20
+	exit
+
+	class QoS_Scavenger
+	police 100000
+	exit
+
+	class class-default
+	fair-queue
+	exit
+
+#R23-virtual
+
+	en
+	conf t
+
+	interface fa0/0
+	ip address 185.83.248.34 255.255.255.252
+	service-policy output QoS_Out
+	no shutdown
+	exit
+
+	interface fa2/0
+	ip address 192.168.0.9 255.255.255.252
+	service-policy input MARCAR
+	no shutdown
+	exit
+
+	interface loopback0
+	ip address 192.168.0.130 255.255.255.255
+	no shutdown
+	exit
+
+	line vty 0 4
+	transport input ssh
+	login local
+	ip domain-name cisco.com
+	crypto key generate rsa
+	username root password root	
+	enable secret root 
+	
+	ip route 0.0.0.0 0.0.0.0 185.83.248.33
+
+	class-map match-any Routing
+
+	match protocol bgp 
+	match protocol egp 
+	match protocol eigrp 
+	match protocol rip 
+	match protocol ospf 
+	match protocol bstun 
+	match protocol dhcp
+
+	exit
+
+	class-map match-any Voice
+
+	match protocol sip
+	match protocol h323
+	match protocol mgcp
+	match protocol rtp
+	match protocol rtcp
+	match protocol skype
+
+	exit
+
+	class-map match-any Video
+
+	match protocol h323
+	match protocol cuseeme
+	match protocol skype
+
+	exit
+
+	class-map match-any Streaming
+
+	match protocol http
+	match protocol rtp
+	match protocol rtsp
+
+	exit
+
+	class-map match-any MissionCritical
+
+	match protocol sqlserver
+	match protocol sqlnet
+
+	exit
+
+	class-map match-any CallSignal
+
+	match protocol sip
+	match protocol h323
+	match protocol mgcp
+	match protocol skinny
+
+	exit
+
+	class-map match-any Transactional
+
+	match protocol compressedtcp
+
+	exit
+
+	class-map match-any NetworkManagement
+
+	match protocol citrix
+	match protocol icmp
+	match protocol snmp
+	match protocol telnet
+	match protocol ssh
+	match protocol syslog
+
+	exit
+
+	class-map match-any Bulk
+
+	match protocol ftp
+	match protocol tftp
+	match protocol http
+
+	exit
+
+	class-map match-any Scavenger
+
+	match protocol gnutella
+	match protocol pptp
+	match protocol fasttrack
+
+	exit
+
+	class-map match-any BestEffort
+
+	match protocol clns
+	match protocol cmns
+	match protocol imap
+	match protocol pop3
+
+	exit
+
+
+	policy-map MARCAR 
+	class Routing
+	set ip dscp 48
+	exit
+	class Voice 
+	set ip dscp 46
+	exit
+	class Video
+	set ip dscp 34
+	exit
+	class Streaming
+	set ip dscp 32
+	exit
+	class MissionCritical
+	set ip dscp 26
+	exit
+	class CallSignal
+	set ip dscp 24
+	exit
+	class Transactional
+	set ip dscp 18
+	exit
+	class NetworkManagement
+	set ip dscp 16
+	exit
+	class Bulk
+	set ip dscp 10
+	exit
+	class Scavenger
+	set ip dscp 8
+	exit
+	class class-default
+	set ip dscp 0
+	exit
+	exit
+
+	class-map match-all QoS_RealTime  
+	match ip dscp 46 34 32
+	exit
+	class-map match-all QoS_CriticalData 
+	match ip dscp 48 26 24 18 16 10
+	exit
+	class-map match-all QoS_Scavenger  
+	match ip dscp 8
+	exit
+
+	policy-map QoS_Out
+
+	class QoS_RealTime
+	priority percent 10
+	exit
+
+	class QoS_CriticalData
+	bandwidth percent 20
+	exit
+
+	class QoS_Scavenger
+	police 100000
+	exit
+
+	class class-default
+	fair-queue
+	exit
+
+#R23-alcatel
+
+	conf
+	router
+	interface "cisco"
+	address 185.83.248.34/30
+	port 1/2/2
+	no sh	
+
+	interface "pc"
+	address 192.168.0.9/30
+	port 1/2/1
+	no sh	
+
+	static-route 0.0.0.0/0 next-hop 185.83.248.33
+
+Nota: caso as portas estejam em baixo, é necessário fazer:
+	conf
+	port X -> X é o número da porta
+	shut
+	ethernet
+	mode network
+	no shut
+
+#PC1
+
+linux:
+	sudo ip addr add 192.168.0.2/30 dev eth0
+	sudo route add default gw 192.168.0.1
+
+VPCS:
+	ip 192.168.0.2/30 192.168.0.1
+	save
+
+
+#PC2
+
+linux:
+	sudo ip addr add 192.168.0.6/30 dev eth0
+	sudo route add default gw 192.168.0.5
+
+VPCS:
+	ip 192.168.0.6/30 192.168.0.5
+	save
+
+#PC3
+
+linux:
+	sudo ip addr add 192.168.0.10/30 dev eth0
+	sudo route add default gw 192.168.0.9
+
+VPCS:
+	ip 192.168.0.10/30 192.168.0.9
+	save
+
+#PC4
+
+#PC5
+
+	ip 2001:8a0:0:12::2/126
+	save
+
+

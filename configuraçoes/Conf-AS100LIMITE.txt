@@ -1,0 +1,972 @@
+#R7 liga ao vodafone pela interface f2/1 ao R20 F2/0
+----------------------------------------------------------
+	enable 
+	conf t
+
+	ipv6 unicast-routing
+
+	router ospf 3
+	router-id 7.7.7.7
+	area 5 nssa
+	area 4 nssa no-summary
+	area 7 virtual-link 25.25.25.25
+	
+	ipv6 router ospf 4
+	router-id 7.7.7.8
+	area 5 nssa
+	area 4 nssa no-summary
+	area 7 virtual-link 25.25.25.26
+
+
+	interface loopback0
+	ip address 185.83.248.128 255.255.255.255
+	ip ospf 3 area 0
+	ipv6 address 2a05:a040:0:1000::1/128
+	ipv6 address FE80::7 link-local
+	ipv6 ospf 4 area 0
+
+
+	interface fa0/0
+	ip address 185.83.248.1 255.255.255.252
+	ip ospf 3 area 0
+	ipv6 address 2a05:a040::1/126
+	ipv6 address FE80::7 link-local
+	ipv6 ospf 4 area 0
+	no shut
+
+	interface fa2/0
+	ip address 185.83.248.5 255.255.255.252
+	ip ospf 3 area 4
+	ipv6 address 2a05:a040:0:1::1/126 
+	ipv6 address FE80::7 link-local
+	ipv6 ospf 4 area 4
+	no shut
+
+	interface fa2/1
+	ip address 185.83.248.9 255.255.255.252
+	ipv6 address 2001:7f8:a:4::2/126
+	ipv6 address FE80::7 link-local
+	no shut 
+
+	interface fa3/0
+	ip address 185.83.248.13 255.255.255.252
+	ip ospf 3 area 7
+	ipv6 address 2a05:a040:0:2::1/126 
+	ipv6 address FE80::7 link-local
+	ipv6 ospf 4 area 7 
+	no shut
+
+	interface fa3/1
+	ip address 185.83.248.17 255.255.255.252
+	ip ospf 3 area 5
+	ipv6 address 2a05:a040:0:3::1/126 
+	ipv6 address FE80::7 link-local
+	ipv6 ospf 4 area 5 
+	no shut
+
+	router BGP 3243
+	bgp router-id 7.7.7.7
+	bgp log-neighbor-changes
+
+	neighbor 2001:8a0:0:1000::8 remote-as 3243
+	neighbor 2001:8a0:0:1000::8 update-source Loopback0
+	neighbor 2001:7f8:a:4::1 remote-as 12353
+
+	neighbor 212.55.128.135 remote-as 3243
+	neighbor 212.55.128.135 update-source Loopback0
+	neighbor 185.83.248.10 remote-as 12353
+
+	address-family ipv6
+	neighbor 2001:7f8:a:4::1 activate
+	neighbor 2001:8a0:0:1000::8 activate
+	neighbor 2001:8a0:0:1000::8 next-hop-self
+	redistribute static 
+	exit-address-family
+
+	address-family ipv4
+	neighbor 185.83.248.10 activate
+	neighbor 212.55.128.135 activate
+	neighbor 212.55.128.135 next-hop-self
+	redistribute static 
+	exit-address-family
+
+	exit
+
+	ip route 185.83.248.0 255.255.252.0 Null0
+	ipv6 route 2A05:A040::/29 Null0
+
+	//////////segunda parte//////////////
+
+	mpls label range 700 750
+
+	interface fa0/0
+	mpls ip
+	service-policy output QoS_Out
+	exit
+
+	interface fa2/0
+	mpls ip
+	service-policy output QoS_Out
+	exit
+
+	interface fa2/1
+	mpls ip
+	service-policy output QoS_Out
+	exit
+
+	interface fa3/0
+	mpls ip
+	service-policy output QoS_Out
+	exit
+
+	interface fa3/1
+	mpls ip
+	service-policy output QoS_Out
+	exit
+
+	class-map match-all QoS_RealTime  
+	match ip dscp 46 34 32
+	exit
+	class-map match-all QoS_CriticalData 
+	match ip dscp 48 26 24 18 16 10
+	exit
+	class-map match-all QoS_Scavenger  
+	match ip dscp 8
+	exit
+
+	policy-map QoS_Out
+
+	class QoS_RealTime
+	priority percent 10
+	exit
+
+	class QoS_CriticalData
+	bandwidth percent 20
+	exit
+
+	class QoS_Scavenger
+	police 100000
+	exit
+
+	class class-default
+	fair-queue
+	exit
+
+#R8 liga ao Meo Regional pela interface f0/0 ao R3 F3/0
+-------------------------------------------------------
+	enable 
+	conf t
+
+	ipv6 unicast-routing
+	
+	router ospf 3
+	router-id 8.8.8.8
+
+	ipv6 router ospf 4
+	router-id 8.8.8.9 
+
+	interface loopback0
+	ip address 185.83.248.129 255.255.255.255
+	ip ospf 3 area 0
+	ipv6 address 2a05:a040:0:1000::2/128
+	ipv6 address FE80::8 link-local
+	ipv6 ospf 4 area 0
+
+	interface f0/0
+	ip address 185.83.248.21 255.255.255.252
+	ip ospf 3 area 0
+	ipv6 address 2a05:a040:0:4::1/126 
+	ipv6 address FE80::8 link-local
+	ipv6 ospf 4 area 0
+	no shut
+
+	interface f2/0
+	ip address 185.83.248.25 255.255.255.252
+	ip ospf 3 area 0
+	ipv6 address 2a05:a040:0:5::1/126 
+	ipv6 address FE80::8 link-local
+	ipv6 ospf 4 area 0
+	no shut
+
+	interface f2/1
+	ip address 185.83.248.2 255.255.255.252
+	ip ospf 3 area 0
+	ipv6 address 2a05:a040::2/126
+	ipv6 address FE80::8 link-local
+	ipv6 ospf 4 area 0
+	no shut
+
+	router BGP 3243
+	bgp router-id 8.8.8.8
+	bgp log-neighbor-changes
+
+	neighbor 2001:8a0:0:1000::8 remote-as 3243
+	neighbor 2001:8a0:0:1000::8 update-source Loopback0
+
+	neighbor 212.55.128.135 remote-as 3243
+	neighbor 212.55.128.135 update-source Loopback0
+
+	address-family ipv6
+	neighbor 2001:8a0:0:1000::8 activate
+	neighbor 2001:8a0:0:1000::8 next-hop-self
+	redistribute static 
+	exit-address-family
+
+	address-family ipv4
+	neighbor 212.55.128.135 activate
+	neighbor 212.55.128.135 next-hop-self
+	redistribute static 
+	exit-address-family
+
+	exit
+
+	//////////segunda parte//////////////
+
+	mpls label range 800 850
+
+	interface fa0/0
+	mpls ip
+	service-policy output QoS_Out
+	exit
+
+	interface fa2/0
+	mpls ip
+	service-policy output QoS_Out
+	exit
+
+	interface fa2/1
+	mpls ip
+	service-policy output QoS_Out
+	exit
+
+	class-map match-all QoS_RealTime  
+	match ip dscp 46 34 32
+	exit
+	class-map match-all QoS_CriticalData 
+	match ip dscp 48 26 24 18 16 10
+	exit
+	class-map match-all QoS_Scavenger  
+	match ip dscp 8
+	exit
+
+	policy-map QoS_Out
+
+	class QoS_RealTime
+	priority percent 10
+	exit
+
+	class QoS_CriticalData
+	bandwidth percent 20
+	exit
+
+	class QoS_Scavenger
+	police 100000
+	exit
+
+	class class-default
+	fair-queue
+	exit
+
+
+#R9
+---------------------------------------------------------
+	enable 
+	conf t
+
+	ipv6 unicast-routing
+	
+	router ospf 3
+	router-id 9.9.9.9
+	area 4 nssa no-summary
+	
+	ipv6 router ospf 4
+	router-id 9.9.9.9 
+	area 4 nssa no-summary
+
+	interface loopback0
+	ip address 185.83.248.130 255.255.255.255
+	ip ospf 3 area 4
+	ipv6 address 2a05:a040:0:1000::3/128
+	ipv6 address FE80::9 link-local
+	ipv6 ospf 4 area 4
+
+	interface f0/0
+	ip address 185.83.248.29 255.255.255.252
+	ip ospf 3 area 4
+	ipv6 address 2a05:a040:0:6::1/126 
+	ipv6 address FE80::9 link-local
+	ipv6 ospf 4 area 4
+	no shut
+
+	interface f2/0
+	ip address 185.83.248.33 255.255.255.252
+	ip ospf 3 area 4
+	ipv6 address 2a05:a040:0:7::1/126
+	ipv6 address FE80::9 link-local
+	ipv6 ospf 4 area 4
+	no shut
+
+	interface f2/1
+	ip address 185.83.248.6 255.255.255.252
+	ip ospf 3 area 4
+	ipv6 address 2a05:a040:0:1::2/126
+	ipv6 address FE80::9 link-local
+	ipv6 ospf 4 area 4
+	no shut
+
+	router BGP 3243
+	bgp router-id 9.9.9.9
+	bgp log-neighbor-changes
+
+	neighbor 2001:8a0:0:1000::8 remote-as 3243
+	neighbor 2001:8a0:0:1000::8 update-source Loopback0
+
+	neighbor 212.55.128.135 remote-as 3243
+	neighbor 212.55.128.135 update-source Loopback0
+
+	address-family ipv6
+	neighbor 2001:8a0:0:1000::8 activate
+	neighbor 2001:8a0:0:1000::8 next-hop-self
+	redistribute static 
+	exit-address-family
+
+	address-family ipv4
+	neighbor 212.55.128.135 activate
+	neighbor 212.55.128.135 next-hop-self
+	redistribute static 
+	exit-address-family
+
+	exit
+
+
+	//////////segunda parte//////////////
+
+	#configuraçao VPN
+	ip vrf VPN
+	rd 3243:1 -> identifica a VPN
+	route-target export 3243:1
+	route-target import 3243:1
+
+	interface loopback1
+	ip vrf forwarding VPN
+	ip address 9.9.9.9 255.255.255.255
+	no sh
+	exit
+
+	interface f2/0
+	ip vrf forwarding VPN
+	ip address 185.83.248.33 255.255.255.252
+	ip ospf 3 area 4
+	ipv6 address 2a05:a040:0:7::1/126
+	ipv6 address FE80::9 link-local
+	ipv6 ospf 4 area 4
+	service-policy output QoS_Out
+	
+	mpls label range 900 950
+
+	interface f0/0
+	mpls ip
+	service-policy output QoS_Out 
+	exit
+
+	interface f2/1
+	mpls ip 
+	service-policy output QoS_Out
+	exit
+
+	router BGP 3243
+	#comando de conf vpn 
+	neighbor 212.55.128.135 remote-as 3243
+
+	#conf vpn
+	address-family vpnv4
+		neighbor 212.55.128.135 activate
+		neighbor 212.55.128.135 send-community extended
+		neighbor 212.55.128.135 next-hop-self
+		neighbor 185.83.248.136 activate
+		neighbor 185.83.248.136 send-community extended
+		neighbor 185.83.248.136 next-hop-self
+	exit-address-family
+
+	address-family ipv4 vrf VPN
+		redistribute connected
+		redistribute static
+	exit-address-family
+	exit
+
+	ip route vrf VPN 192.168.0.8 255.255.255.252 185.83.248.34
+
+
+	class-map match-all QoS_RealTime  
+	match ip dscp 46 34 32
+	exit
+	class-map match-all QoS_CriticalData 
+	match ip dscp 48 26 24 18 16 10
+	exit
+	class-map match-all QoS_Scavenger  
+	match ip dscp 8
+	exit
+
+	policy-map QoS_Out
+
+	class QoS_RealTime
+	priority percent 10
+	exit
+
+	class QoS_CriticalData
+	bandwidth percent 20
+	exit
+
+	class QoS_Scavenger
+	police 100000
+	exit
+
+	class class-default
+	fair-queue
+	exit
+
+
+#R10 liga ao meo regional pela interface f0/0 ao R6 F2/1
+--------------------------------------------------------
+	enable 
+	conf t
+
+	ipv6 unicast-routing
+
+	router ospf 3
+	router-id 10.10.10.10
+
+	ipv6 router ospf 4
+	router-id 10.10.10.11 
+
+	interface loopback0
+	ip address 185.83.248.131 255.255.255.255
+	ip ospf 3 area 0
+	ipv6 address 2a05:a040:0:1000::4/128
+	ipv6 address FE80::10 link-local
+	ipv6 ospf 4 area 0
+
+
+	interface fa0/0
+	ip address 185.83.248.37 255.255.255.252
+	ip ospf 3 area 0
+	ipv6 address 2a05:a040:0:8::1/126
+	ipv6 address FE80::10 link-local
+	ipv6 ospf 4 area 0
+	no shut
+
+	interface fa2/0
+	ip address 185.83.248.26 255.255.255.252
+	ip ospf 3 area 0
+	ipv6 address 2a05:a040:0:5::2/126   
+	ipv6 address FE80::10 link-local
+	ipv6 ospf 4 area 0
+	no shut
+
+	interface f2/1
+	ip address 185.83.248.41 255.255.255.252
+	no ip ospf 3 area 0
+	ipv6 address 2a05:a040:0:9::1/126
+	ipv6 address FE80::10 link-local
+	no ipv6 ospf 4 area 0
+	no shut
+
+	router BGP 3243
+	bgp router-id 10.10.10.10
+	bgp log-neighbor-changes
+
+	neighbor 2001:8a0:0:1000::8 remote-as 3243
+	neighbor 2001:8a0:0:1000::8 update-source Loopback0
+
+	neighbor 212.55.128.135 remote-as 3243
+	neighbor 212.55.128.135 update-source Loopback0
+
+	address-family ipv6
+	neighbor 2001:8a0:0:1000::8 activate
+	neighbor 2001:8a0:0:1000::8 next-hop-self
+	redistribute static 
+	exit-address-family
+
+	address-family ipv4
+	neighbor 212.55.128.135 activate
+	neighbor 212.55.128.135 next-hop-self
+	redistribute static 
+	exit-address-family
+
+#a configuração do BGP TERMINA AQUI ^
+
+	exit
+
+///////////segunda parte:///////////
+
+	#configuraçao VPN
+	ip vrf VPN
+	rd 3243:1 -> identifica a VPN
+	route-target export 3243:1
+	route-target import 3243:1
+
+	interface loopback1
+	ip vrf forwarding VPN
+	ip address 10.10.10.10 255.255.255.255
+	no sh
+	exit
+
+	interface f2/1
+	ip vrf forwarding VPN -> comando necessário para a VPN
+	ip address 185.83.248.41 255.255.255.252
+	ipv6 address 2a05:a040:0:9::1/126
+	ipv6 address FE80::10 link-local
+	no shut
+
+	service-policy output QoS_Out
+
+	#configuração mpls
+	mpls label range 1000 1500
+
+	interface fa0/0
+	mpls ip
+	service-policy output QoS_Out
+	exit
+
+	interface fa2/0
+	mpls ip
+	service-policy output QoS_Out
+	exit
+
+	#este rip é diferente pois apenas está a ser criado para ser usado na VPN
+	router rip
+	version 2
+	address-family ipv4 vrf VPN
+		redistribute connected
+		redistribute bgp 3243 metric 2
+		network 185.83.248.40
+		no auto-summary
+		version 2
+	exit-address-family
+	exit
+
+	router BGP 3243
+	#comando de conf vpn 
+	neighbor 212.55.128.135 remote-as 3243
+
+	#conf vpn
+	address-family vpnv4
+		neighbor 212.55.128.135 activate
+		neighbor 212.55.128.135 send-community extended
+		neighbor 212.55.128.135 next-hop-self
+		neighbor 185.83.248.136 activate
+		neighbor 185.83.248.136 send-community extended
+		neighbor 185.83.248.136 next-hop-self
+	exit-address-family
+
+	address-family ipv4 vrf VPN
+		redistribute connected
+		redistribute rip
+	exit-address-family
+	exit
+
+	class-map match-all QoS_RealTime  
+	match ip dscp 46 34 32
+	exit
+	class-map match-all QoS_CriticalData 
+	match ip dscp 48 26 24 18 16 10
+	exit
+	class-map match-all QoS_Scavenger  
+	match ip dscp 8
+	exit
+
+	policy-map QoS_Out
+
+	class QoS_RealTime
+	priority percent 10
+	exit
+
+	class QoS_CriticalData
+	bandwidth percent 20
+	exit
+
+	class QoS_Scavenger
+	police 100000
+	exit
+
+	class class-default
+	fair-queue
+	exit
+
+#R11
+--------------------------------------------------------
+	enable 
+	conf t
+
+	ipv6 unicast-routing
+
+	router ospf 3
+	router-id 11.11.11.11
+	area 4 nssa no-summary
+
+	ipv6 router ospf 4
+	router-id 11.11.11.12
+	area 4 nssa no-summary
+
+	interface loopback0
+	ip address 185.83.248.132 255.255.255.255
+	ip ospf 3 area 4
+	ipv6 address 2a05:a040:0:1000::5/128
+	ipv6 address FE80::11 link-local
+	ipv6 ospf 4 area 4
+
+	interface f0/0 
+	ip address 185.83.248.30 255.255.255.252
+	ip ospf 3 area 4
+	ipv6 address 2a05:a040:0:6::2/126 
+	ipv6 address FE80::11 link-local
+	ipv6 ospf 4 area 4
+	no shut
+
+	router BGP 3243
+	bgp router-id 11.11.11.11
+	bgp log-neighbor-changes
+
+	neighbor 2001:8a0:0:1000::8 remote-as 3243
+	neighbor 2001:8a0:0:1000::8 update-source Loopback0
+
+	neighbor 212.55.128.135 remote-as 3243
+	neighbor 212.55.128.135 update-source Loopback0
+
+	address-family ipv6
+	neighbor 2001:8a0:0:1000::8 activate
+	neighbor 2001:8a0:0:1000::8 next-hop-self
+	redistribute static 
+	exit-address-family
+
+	address-family ipv4
+	neighbor 212.55.128.135 activate
+	neighbor 212.55.128.135 next-hop-self
+	redistribute static 
+	exit-address-family
+
+	exit
+
+	//////////segunda parte//////////////
+
+	mpls label range 1100 1150
+
+	interface fa0/0
+	mpls ip
+	service-policy output QoS_Out
+	exit
+
+	class-map match-all QoS_RealTime  
+	match ip dscp 46 34 32
+	exit
+	class-map match-all QoS_CriticalData 
+	match ip dscp 48 26 24 18 16 10
+	exit
+	class-map match-all QoS_Scavenger  
+	match ip dscp 8
+	exit
+
+	policy-map QoS_Out
+
+	class QoS_RealTime
+	priority percent 10
+	exit
+
+	class QoS_CriticalData
+	bandwidth percent 20
+	exit
+
+	class QoS_Scavenger
+	police 100000
+	exit
+
+	class class-default
+	fair-queue
+	exit
+
+#R25
+----------------------------------------------------------
+	enable 
+	conf t
+
+	ipv6 unicast-routing
+
+	router ospf 3
+	router-id 25.25.25.25
+	area 7 virtual-link 7.7.7.7
+
+	ipv6 router ospf 4
+	router-id 25.25.25.26
+	area 7 virtual-link 7.7.7.8
+
+	interface loopback0
+	ip address 185.83.248.133 255.255.255.255
+	ip ospf 3 area 7
+	ipv6 address 2a05:a040:0:1000::6/128
+	ipv6 address FE80::25 link-local
+	ipv6 ospf 4 area 7
+
+	interface f0/0 
+	ip address 185.83.248.14 255.255.255.252
+	ip ospf 3 area 7
+	ipv6 address 2a05:a040:0:2::2/126 
+	ipv6 address FE80::25 link-local
+	ipv6 ospf 4 area 7
+	no shut
+
+	interface f1/0 
+	ip address 185.83.248.45 255.255.255.252
+	ip ospf 3 area 6
+	ipv6 address 2a05:a040:0:10::1/126
+	ipv6 address FE80::25 link-local
+	ipv6 ospf 4 area 6
+	no shut
+
+	router BGP 3243
+	bgp router-id 25.25.25.25
+	bgp log-neighbor-changes
+
+	neighbor 2001:8a0:0:1000::8 remote-as 3243
+	neighbor 2001:8a0:0:1000::8 update-source Loopback0
+
+	neighbor 212.55.128.135 remote-as 3243
+	neighbor 212.55.128.135 update-source Loopback0
+
+	address-family ipv6
+	neighbor 2001:8a0:0:1000::8 activate
+	neighbor 2001:8a0:0:1000::8 next-hop-self
+	redistribute static 
+	exit-address-family
+
+	address-family ipv4
+	neighbor 212.55.128.135 activate
+	neighbor 212.55.128.135 next-hop-self
+	redistribute static 
+	exit-address-family
+
+	exit
+
+	//////////segunda parte//////////////
+
+	mpls label range 2500 2550
+
+	interface fa0/0
+	mpls ip
+	service-policy output QoS_Out
+	exit
+
+	interface fa1/0
+	mpls ip
+	service-policy output QoS_Out
+	exit
+
+	class-map match-all QoS_RealTime  
+	match ip dscp 46 34 32
+	exit
+	class-map match-all QoS_CriticalData 
+	match ip dscp 48 26 24 18 16 10
+	exit
+	class-map match-all QoS_Scavenger  
+	match ip dscp 8
+	exit
+
+	policy-map QoS_Out
+
+	class QoS_RealTime
+	priority percent 10
+	exit
+
+	class QoS_CriticalData
+	bandwidth percent 20
+	exit
+
+	class QoS_Scavenger
+	police 100000
+	exit
+
+	class class-default
+	fair-queue
+	exit
+
+
+#R28
+----------------------------------------------------------
+	enable 
+	conf t
+
+	ipv6 unicast-routing
+
+	router ospf 3
+	router-id 28.28.28.28
+
+	ipv6 router ospf 4
+	router-id 28.28.28.29
+
+	interface loopback0
+	ip address 185.83.248.134 255.255.255.255
+	ip ospf 3 area 6
+	ipv6 address 2a05:a040:0:1000::7/128
+	ipv6 address FE80::28 link-local
+	ipv6 ospf 4 area 6
+
+	interface f0/0 
+	ip address 185.83.248.46 255.255.255.252
+	ip ospf 3 area 6
+	ipv6 address 2a05:a040:0:10::1/126
+	ipv6 address FE80::28 link-local
+	ipv6 ospf 4 area 6
+	no shut
+
+	router BGP 3243
+	bgp router-id 28.28.28.28
+	bgp log-neighbor-changes
+
+	neighbor 2001:8a0:0:1000::8 remote-as 3243
+	neighbor 2001:8a0:0:1000::8 update-source Loopback0
+
+	neighbor 212.55.128.135 remote-as 3243
+	neighbor 212.55.128.135 update-source Loopback0
+
+	address-family ipv6
+	neighbor 2001:8a0:0:1000::8 activate
+	neighbor 2001:8a0:0:1000::8 next-hop-self
+	redistribute static 
+	exit-address-family
+
+	address-family ipv4
+	neighbor 212.55.128.135 activate
+	neighbor 212.55.128.135 next-hop-self
+	redistribute static 
+	exit-address-family
+
+	exit
+
+	//////////segunda parte//////////////
+
+	mpls label range 2800 2850
+
+	interface fa0/0
+	mpls ip
+	service-policy output QoS_Out
+	exit
+
+	class-map match-all QoS_RealTime  
+	match ip dscp 46 34 32
+	exit
+	class-map match-all QoS_CriticalData 
+	match ip dscp 48 26 24 18 16 10
+	exit
+	class-map match-all QoS_Scavenger  
+	match ip dscp 8
+	exit
+
+	policy-map QoS_Out
+
+	class QoS_RealTime
+	priority percent 10
+	exit
+
+	class QoS_CriticalData
+	bandwidth percent 20
+	exit
+
+	class QoS_Scavenger
+	police 100000
+	exit
+
+	class class-default
+	fair-queue
+	exit
+
+
+
+#R29
+--------------------------------------------------------
+	enable 
+	conf t
+
+	ipv6 unicast-routing
+
+	router ospf 3
+	router-id 29.29.29.29
+	area 5 nssa
+	
+	ipv6 router ospf 4
+	router-id 29.29.29.30
+	area 5 nssa
+
+	interface loopback0
+	ip address 185.83.248.135 255.255.255.255
+	ip ospf 3 area 5
+	ipv6 address 2a05:a040:0:1000::8/128
+	ipv6 address FE80::29 link-local
+	ipv6 ospf 4 area 5
+
+	interface f0/0 
+	ip address 185.83.248.18 255.255.255.252
+	ip ospf 3 area 5
+	ipv6 address 2a05:a040:0:3::2/126 
+	ipv6 address FE80::29 link-local
+	ipv6 ospf 4 area 5
+	no shut
+
+	router BGP 3243
+	bgp router-id 29.29.29.29
+	bgp log-neighbor-changes
+
+	neighbor 2001:8a0:0:1000::8 remote-as 3243
+	neighbor 2001:8a0:0:1000::8 update-source Loopback0
+
+	neighbor 212.55.128.135 remote-as 3243
+	neighbor 212.55.128.135 update-source Loopback0
+
+	address-family ipv6
+	neighbor 2001:8a0:0:1000::8 activate
+	neighbor 2001:8a0:0:1000::8 next-hop-self
+	redistribute static 
+	exit-address-family
+
+	address-family ipv4
+	neighbor 212.55.128.135 activate
+	neighbor 212.55.128.135 next-hop-self
+	redistribute static 
+	exit-address-family
+
+	exit
+
+//////////segunda parte//////////////
+
+	mpls label range 2900 2950
+
+	interface fa0/0
+	mpls ip
+	service-policy output QoS_Out
+	exit
+
+	class-map match-all QoS_RealTime  
+	match ip dscp 46 34 32
+	exit
+	class-map match-all QoS_CriticalData 
+	match ip dscp 48 26 24 18 16 10
+	exit
+	class-map match-all QoS_Scavenger  
+	match ip dscp 8
+	exit
+
+	policy-map QoS_Out
+
+		class QoS_RealTime
+		priority percent 10
+		exit
+
+		class QoS_CriticalData
+		bandwidth percent 20
+		exit
+
+		class QoS_Scavenger
+		police 100000
+		exit
+
+		class class-default
+		fair-queue
+	exit

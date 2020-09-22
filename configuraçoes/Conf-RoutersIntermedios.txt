@@ -1,0 +1,512 @@
+#R26
+----------------------------------------------
+	enable 
+	conf t
+
+	ipv6 unicast-routing
+
+	router ospf 1
+	router-id 26.26.26.26
+	redistribute ospf 3 subnet
+
+	router ospf 3
+	router-id 26.26.26.26
+	redistribute ospf 1 subnet
+
+	ipv6 router ospf 2
+	router-id 26.26.26.27
+	redistribute ospf 4 
+
+	ipv6 router ospf 4
+	router-id 26.26.26.27
+	redistribute ospf 2 
+
+	interface Loopback0
+	ip address 212.55.128.135 255.255.255.255
+	ip ospf 1 area 0
+	ipv6 address 2001:8a0:0:1000::8/128
+	ipv6 address FE80::26 link-local
+	ipv6 ospf 2 area 0
+	no shut
+
+	interface f0/0 
+	ip address 212.55.128.38 255.255.255.252
+	ip ospf 1 area 0
+	ipv6 address 2001:8a0:0:8::2/126
+	ipv6 address FE80::26 link-local
+	ipv6 ospf 2 area 0
+	no shut
+
+	interface f1/0 
+	ip address 185.83.248.22 255.255.255.252
+	ip ospf 3 area 0
+	ipv6 address 2a05:a040:0:4::2/126 
+	ipv6 address FE80::26 link-local
+	ipv6 ospf 4 area 0
+	no shut
+
+	router BGP 3243
+	bgp router-id 26.26.26.26 
+	bgp log-neighbor-changes
+
+	neighbor 2001:8a0:0:1000::1 remote-as 3243
+	neighbor 2001:8a0:0:1000::1 update-source Loopback0
+	neighbor 2001:8a0:0:1000::2 remote-as 3243
+	neighbor 2001:8a0:0:1000::2 update-source Loopback0
+	neighbor 2001:8a0:0:1000::3 remote-as 3243
+	neighbor 2001:8a0:0:1000::3 update-source Loopback0
+	neighbor 2001:8a0:0:1000::4 remote-as 3243
+	neighbor 2001:8a0:0:1000::4 update-source Loopback0
+	neighbor 2001:8a0:0:1000::5 remote-as 3243
+	neighbor 2001:8a0:0:1000::5 update-source Loopback0
+	neighbor 2001:8a0:0:1000::6 remote-as 3243
+	neighbor 2001:8a0:0:1000::6 update-source Loopback0
+	neighbor 2001:8a0:0:1000::7 remote-as 3243
+	neighbor 2001:8a0:0:1000::7 update-source Loopback0
+	neighbor 2a05:a040:0:1000::1 remote-as 3243
+	neighbor 2a05:a040:0:1000::1 update-source Loopback0
+	neighbor 2a05:a040:0:1000::2 remote-as 3243
+	neighbor 2a05:a040:0:1000::2 update-source Loopback0
+	neighbor 2a05:a040:0:1000::3 remote-as 3243
+	neighbor 2a05:a040:0:1000::3 update-source Loopback0
+	neighbor 2a05:a040:0:1000::4 remote-as 3243
+	neighbor 2a05:a040:0:1000::4 update-source Loopback0
+	neighbor 2a05:a040:0:1000::5 remote-as 3243
+	neighbor 2a05:a040:0:1000::5 update-source Loopback0
+	neighbor 2a05:a040:0:1000::6 remote-as 3243
+	neighbor 2a05:a040:0:1000::6 update-source Loopback0
+	neighbor 2a05:a040:0:1000::7 remote-as 3243
+	neighbor 2a05:a040:0:1000::7 update-source Loopback0
+	neighbor 2a05:a040:0:1000::8 remote-as 3243
+	neighbor 2a05:a040:0:1000::8 update-source Loopback0
+
+	#r1
+	neighbor 212.55.128.128 remote-as 3243
+	neighbor 212.55.128.128 update-source Loopback0 
+	#r2
+	neighbor 212.55.128.129 remote-as 3243
+	neighbor 212.55.128.129 update-source Loopback0
+	#r3
+	neighbor 212.55.128.130 remote-as 3243
+	neighbor 212.55.128.130 update-source Loopback0
+	#r4
+	neighbor 212.55.128.131 remote-as 3243
+	neighbor 212.55.128.131 update-source Loopback0
+	#r5
+	neighbor 212.55.128.132 remote-as 3243
+	neighbor 212.55.128.132 update-source Loopback0
+	#r6
+	neighbor 212.55.128.133 remote-as 3243
+	neighbor 212.55.128.133 update-source Loopback0
+	#r24
+	neighbor 212.55.128.134 remote-as 3243
+	neighbor 212.55.128.134 update-source Loopback0
+	#r7
+	neighbor 185.83.248.128 remote-as 3243 
+	neighbor 185.83.248.128 update-source Loopback0
+	#r8
+	neighbor 185.83.248.129 remote-as 3243 
+	neighbor 185.83.248.129 update-source Loopback0
+	#r9
+	neighbor 185.83.248.130 remote-as 3243 
+	neighbor 185.83.248.130 update-source Loopback0
+	#r10
+	neighbor 185.83.248.131 remote-as 3243 
+	neighbor 185.83.248.131 update-source Loopback0
+	#r11
+	neighbor 185.83.248.132 remote-as 3243 
+	neighbor 185.83.248.132 update-source Loopback0
+	#r25
+	neighbor 185.83.248.133 remote-as 3243 
+	neighbor 185.83.248.133 update-source Loopback0
+	#r28
+	neighbor 185.83.248.134 remote-as 3243 
+	neighbor 185.83.248.134 update-source Loopback0
+	#r29
+	neighbor 185.83.248.135 remote-as 3243 
+	neighbor 185.83.248.135 update-source Loopback0
+
+	address-family ipv6
+	neighbor 2001:8a0:0:1000::1 activate
+	neighbor 2001:8a0:0:1000::1 route-reflector-client
+	neighbor 2001:8a0:0:1000::2 activate
+	neighbor 2001:8a0:0:1000::2 route-reflector-client
+	neighbor 2001:8a0:0:1000::3 activate
+	neighbor 2001:8a0:0:1000::3 route-reflector-client
+	neighbor 2001:8a0:0:1000::4 activate
+	neighbor 2001:8a0:0:1000::4 route-reflector-client
+	neighbor 2001:8a0:0:1000::5 activate
+	neighbor 2001:8a0:0:1000::5 route-reflector-client
+	neighbor 2001:8a0:0:1000::6 activate
+	neighbor 2001:8a0:0:1000::6 route-reflector-client
+	neighbor 2001:8a0:0:1000::7 activate
+	neighbor 2001:8a0:0:1000::7 route-reflector-client
+	neighbor 2a05:a040:0:1000::1 activate
+	neighbor 2a05:a040:0:1000::1 route-reflector-client
+	neighbor 2a05:a040:0:1000::2 activate
+	neighbor 2a05:a040:0:1000::2 route-reflector-client
+	neighbor 2a05:a040:0:1000::3 activate
+	neighbor 2a05:a040:0:1000::3 route-reflector-client
+	neighbor 2a05:a040:0:1000::4 activate
+	neighbor 2a05:a040:0:1000::4 route-reflector-client
+	neighbor 2a05:a040:0:1000::5 activate
+	neighbor 2a05:a040:0:1000::5 route-reflector-client
+	neighbor 2a05:a040:0:1000::6 activate
+	neighbor 2a05:a040:0:1000::6 route-reflector-client
+	neighbor 2a05:a040:0:1000::7 activate
+	neighbor 2a05:a040:0:1000::7 route-reflector-client
+	neighbor 2a05:a040:0:1000::8 activate
+	neighbor 2a05:a040:0:1000::8 route-reflector-client
+	exit-address-family
+
+	address-family ipv4
+	neighbor 212.55.128.128 activate
+	neighbor 212.55.128.128 route-reflector-client
+	neighbor 212.55.128.129 activate
+	neighbor 212.55.128.129 route-reflector-client
+	neighbor 212.55.128.130 activate
+	neighbor 212.55.128.130 route-reflector-client
+	neighbor 212.55.128.131 activate
+	neighbor 212.55.128.131 route-reflector-client
+	neighbor 212.55.128.132 activate
+	neighbor 212.55.128.132 route-reflector-client
+	neighbor 212.55.128.133 activate
+	neighbor 212.55.128.133 route-reflector-client
+	neighbor 212.55.128.134 activate
+	neighbor 212.55.128.134 route-reflector-client
+	neighbor 185.83.248.128 activate
+	neighbor 185.83.248.128 route-reflector-client
+	neighbor 185.83.248.129 activate
+	neighbor 185.83.248.129 route-reflector-client
+	neighbor 185.83.248.130 activate
+	neighbor 185.83.248.130 route-reflector-client
+	neighbor 185.83.248.131 activate
+	neighbor 185.83.248.131 route-reflector-client
+	neighbor 185.83.248.132 activate
+	neighbor 185.83.248.132 route-reflector-client
+	neighbor 185.83.248.133 activate
+	neighbor 185.83.248.133 route-reflector-client
+	neighbor 185.83.248.134 activate
+	neighbor 185.83.248.134 route-reflector-client
+	neighbor 185.83.248.135 activate
+	neighbor 185.83.248.135 route-reflector-client
+	exit-address-family
+
+	exit
+
+	//////////segunda parte//////////////
+
+	mpls label range 2600 2650
+
+	interface f0/0
+	mpls ip 
+	service-policy output QoS_Out
+
+	exit
+
+	interface f1/0
+	mpls ip
+	service-policy output QoS_Out 
+	exit
+
+	router bgp 3243
+	neighbor 212.55.128.129 route-reflector-client
+	neighbor 185.83.248.131 route-reflector-client
+	neighbor 185.83.248.130 route-reflector-client
+	address-family vpnv4
+		neighbor 212.55.128.129 activate
+		neighbor 212.55.128.129 send-community extended
+		neighbor 212.55.128.129 route-reflector-client
+		neighbor 185.83.248.131 activate
+		neighbor 185.83.248.131 send-community extended
+		neighbor 185.83.248.131 route-reflector-client
+		neighbor 185.83.248.130 activate
+		neighbor 185.83.248.130 send-community extended
+		neighbor 185.83.248.130 route-reflector-client
+	exit-address-family
+	exit
+	
+	class-map match-all QoS_RealTime  
+	match ip dscp 46 34 32
+	exit
+	class-map match-all QoS_CriticalData 
+	match ip dscp 48 26 24 18 16 10
+	exit
+	class-map match-all QoS_Scavenger  
+	match ip dscp 8
+	exit
+
+	policy-map QoS_Out
+
+	class QoS_RealTime
+	priority percent 10
+	exit
+
+	class QoS_CriticalData
+	bandwidth percent 20
+	exit
+
+	class QoS_Scavenger
+	police 100000
+	exit
+
+	class class-default
+	fair-queue
+	exit
+	
+
+#R27 
+----------------------------------------------
+	enable 
+	conf t
+
+	ipv6 unicast-routing
+
+	router ospf 1
+	router-id 27.27.27.27
+	redistribute ospf 3 subnet
+
+	router ospf 3
+	router-id 27.27.27.27
+	redistribute ospf 1 subnet
+
+	ipv6 router ospf 2
+	router-id 27.27.27.28
+	redistribute ospf 4 
+
+	ipv6 router ospf 4
+	router-id 27.27.27.28
+	redistribute ospf 2 
+
+	interface Loopback0
+	ip address 185.83.248.136 255.255.255.255
+	ip ospf 3 area 0
+	ipv6 address 2a05:a040:0:1000::9/128
+	ipv6 address FE80::27 link-local
+	ipv6 ospf 4 area 0
+	no shut
+
+	interface f0/0 
+	ip address 212.55.128.50 255.255.255.252
+	ip ospf 1 area 0
+	ipv6 address 2001:8a0:0:11::2/126 
+	ipv6 address FE80::27 link-local
+	ipv6 ospf 2 area 0
+	no shut
+
+	interface f1/0 
+	ip address 185.83.248.38 255.255.255.252
+	ip ospf 3 area 0
+	ipv6 address 2a05:a040:0:8::2/126
+	ipv6 address FE80::27 link-local
+	ipv6 ospf 4 area 0
+	no shut
+
+	router BGP 3243
+	bgp router-id 27.27.27.27 
+	bgp log-neighbor-changes
+
+	neighbor 2001:8a0:0:1000::1 remote-as 3243
+	neighbor 2001:8a0:0:1000::1 update-source Loopback0
+	neighbor 2001:8a0:0:1000::2 remote-as 3243
+	neighbor 2001:8a0:0:1000::2 update-source Loopback0
+	neighbor 2001:8a0:0:1000::3 remote-as 3243
+	neighbor 2001:8a0:0:1000::3 update-source Loopback0
+	neighbor 2001:8a0:0:1000::4 remote-as 3243
+	neighbor 2001:8a0:0:1000::4 update-source Loopback0
+	neighbor 2001:8a0:0:1000::5 remote-as 3243
+	neighbor 2001:8a0:0:1000::5 update-source Loopback0
+	neighbor 2001:8a0:0:1000::6 remote-as 3243
+	neighbor 2001:8a0:0:1000::6 update-source Loopback0
+	neighbor 2001:8a0:0:1000::7 remote-as 3243
+	neighbor 2001:8a0:0:1000::7 update-source Loopback0
+	neighbor 2a05:a040:0:1000::1 remote-as 3243
+	neighbor 2a05:a040:0:1000::1 update-source Loopback0
+	neighbor 2a05:a040:0:1000::2 remote-as 3243
+	neighbor 2a05:a040:0:1000::2 update-source Loopback0
+	neighbor 2a05:a040:0:1000::3 remote-as 3243
+	neighbor 2a05:a040:0:1000::3 update-source Loopback0
+	neighbor 2a05:a040:0:1000::4 remote-as 3243
+	neighbor 2a05:a040:0:1000::4 update-source Loopback0
+	neighbor 2a05:a040:0:1000::5 remote-as 3243
+	neighbor 2a05:a040:0:1000::5 update-source Loopback0
+	neighbor 2a05:a040:0:1000::6 remote-as 3243
+	neighbor 2a05:a040:0:1000::6 update-source Loopback0
+	neighbor 2a05:a040:0:1000::7 remote-as 3243
+	neighbor 2a05:a040:0:1000::7 update-source Loopback0
+	neighbor 2a05:a040:0:1000::8 remote-as 3243
+	neighbor 2a05:a040:0:1000::8 update-source Loopback0
+	
+
+	#r1
+	neighbor 212.55.128.128 remote-as 3243 
+	neighbor 212.55.128.128 update-source Loopback0 
+	#r2
+	neighbor 212.55.128.129 remote-as 3243
+	neighbor 212.55.128.129 update-source Loopback0
+	#r3
+	neighbor 212.55.128.130 remote-as 3243
+	neighbor 212.55.128.130 update-source Loopback0
+	#r4
+	neighbor 212.55.128.131 remote-as 3243
+	neighbor 212.55.128.131 update-source Loopback0
+	#r5
+	neighbor 212.55.128.132 remote-as 3243
+	neighbor 212.55.128.132 update-source Loopback0
+	#r6
+	neighbor 212.55.128.133 remote-as 3243
+	neighbor 212.55.128.133 update-source Loopback0
+	#r24
+	neighbor 212.55.128.134 remote-as 3243
+	neighbor 212.55.128.134 update-source Loopback0
+	#r7
+	neighbor 185.83.248.128 remote-as 3243 
+	neighbor 185.83.248.128 update-source Loopback0 
+	#r8
+	neighbor 185.83.248.129 remote-as 3243 
+	neighbor 185.83.248.129 update-source Loopback0
+	#r9
+	neighbor 185.83.248.130 remote-as 3243 
+	neighbor 185.83.248.130 update-source Loopback0
+	#r10
+	neighbor 185.83.248.131 remote-as 3243 
+	neighbor 185.83.248.131 update-source Loopback0
+	#r11
+	neighbor 185.83.248.132 remote-as 3243 
+	neighbor 185.83.248.132 update-source Loopback0
+	#r25
+	neighbor 185.83.248.133 remote-as 3243 
+	neighbor 185.83.248.133 update-source Loopback0
+	#r28
+	neighbor 185.83.248.134 remote-as 3243 
+	neighbor 185.83.248.134 update-source Loopback0
+	#r29
+	neighbor 185.83.248.135 remote-as 3243 
+	neighbor 185.83.248.135 update-source Loopback0
+
+	address-family ipv6
+	neighbor 2001:8a0:0:1000::1 activate
+	neighbor 2001:8a0:0:1000::1 route-reflector-client
+	neighbor 2001:8a0:0:1000::2 activate
+	neighbor 2001:8a0:0:1000::2 route-reflector-client
+	neighbor 2001:8a0:0:1000::3 activate
+	neighbor 2001:8a0:0:1000::3 route-reflector-client
+	neighbor 2001:8a0:0:1000::4 activate
+	neighbor 2001:8a0:0:1000::4 route-reflector-client
+	neighbor 2001:8a0:0:1000::5 activate
+	neighbor 2001:8a0:0:1000::5 route-reflector-client
+	neighbor 2001:8a0:0:1000::6 activate
+	neighbor 2001:8a0:0:1000::6 route-reflector-client
+	neighbor 2001:8a0:0:1000::7 activate
+	neighbor 2001:8a0:0:1000::7 route-reflector-client
+	neighbor 2a05:a040:0:1000::1 activate
+	neighbor 2a05:a040:0:1000::1 route-reflector-client
+	neighbor 2a05:a040:0:1000::2 activate
+	neighbor 2a05:a040:0:1000::2 route-reflector-client
+	neighbor 2a05:a040:0:1000::3 activate
+	neighbor 2a05:a040:0:1000::3 route-reflector-client
+	neighbor 2a05:a040:0:1000::4 activate
+	neighbor 2a05:a040:0:1000::4 route-reflector-client
+	neighbor 2a05:a040:0:1000::5 activate
+	neighbor 2a05:a040:0:1000::5 route-reflector-client
+	neighbor 2a05:a040:0:1000::6 activate
+	neighbor 2a05:a040:0:1000::6 route-reflector-client
+	neighbor 2a05:a040:0:1000::7 activate
+	neighbor 2a05:a040:0:1000::7 route-reflector-client
+	neighbor 2a05:a040:0:1000::8 activate
+	neighbor 2a05:a040:0:1000::8 route-reflector-client
+	exit-address-family
+
+	address-family ipv4
+	neighbor 212.55.128.128 activate
+	neighbor 212.55.128.128 route-reflector-client
+	neighbor 212.55.128.129 activate
+	neighbor 212.55.128.129 route-reflector-client
+	neighbor 212.55.128.130 activate
+	neighbor 212.55.128.130 route-reflector-client
+	neighbor 212.55.128.131 activate
+	neighbor 212.55.128.131 route-reflector-client
+	neighbor 212.55.128.132 activate
+	neighbor 212.55.128.132 route-reflector-client
+	neighbor 212.55.128.133 activate
+	neighbor 212.55.128.133 route-reflector-client
+	neighbor 212.55.128.134 activate
+	neighbor 212.55.128.134 route-reflector-client
+	neighbor 185.83.248.128 activate
+	neighbor 185.83.248.128 route-reflector-client
+	neighbor 185.83.248.129 activate
+	neighbor 185.83.248.129 route-reflector-client
+	neighbor 185.83.248.130 activate
+	neighbor 185.83.248.130 route-reflector-client
+	neighbor 185.83.248.131 activate
+	neighbor 185.83.248.131 route-reflector-client
+	neighbor 185.83.248.132 activate
+	neighbor 185.83.248.132 route-reflector-client
+	neighbor 185.83.248.133 activate
+	neighbor 185.83.248.133 route-reflector-client
+	neighbor 185.83.248.134 activate
+	neighbor 185.83.248.134 route-reflector-client
+	neighbor 185.83.248.135 activate
+	neighbor 185.83.248.135 route-reflector-client
+	exit-address-family
+
+	exit
+
+	//////////segunda parte//////////////
+
+	mpls label range 2700 2750
+
+	interface f0/0
+	mpls ip 
+	service-policy output QoS_Out
+	exit
+
+	interface f1/0
+	mpls ip 
+	service-policy output QoS_Out
+	exit
+
+	router bgp 3243
+	neighbor 212.55.128.129 route-reflector-client
+	neighbor 185.83.248.131 route-reflector-client
+	neighbor 185.83.248.130 route-reflector-client
+	address-family vpnv4
+		neighbor 212.55.128.129 activate
+		neighbor 212.55.128.129 send-community extended
+		neighbor 212.55.128.129 route-reflector-client
+		neighbor 185.83.248.131 activate
+		neighbor 185.83.248.131 send-community extended
+		neighbor 185.83.248.131 route-reflector-client
+		neighbor 185.83.248.130 activate
+		neighbor 185.83.248.130 send-community extended
+		neighbor 185.83.248.130 route-reflector-client
+	exit-address-family
+	exit
+
+	class-map match-all QoS_RealTime  
+	match ip dscp 46 34 32
+	exit
+	class-map match-all QoS_CriticalData 
+	match ip dscp 48 26 24 18 16 10
+	exit
+	class-map match-all QoS_Scavenger  
+	match ip dscp 8
+	exit
+
+	policy-map QoS_Out
+
+	class QoS_RealTime
+	priority percent 10
+	exit
+
+	class QoS_CriticalData
+	bandwidth percent 20
+	exit
+
+	class QoS_Scavenger
+	police 100000
+	exit
+
+	class class-default
+	fair-queue
+	exit

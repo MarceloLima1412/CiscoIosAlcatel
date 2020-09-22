@@ -1,0 +1,38 @@
+Jan 03 21:28:36.145 HYPERVISOR: Release 0.2.17-x86/Windows (tag 2017072410)
+Jan 03 21:28:36.147 HYPERVISOR: Started on IP = 192.168.56.1, TCP port = 53336.
+Jan 03 21:28:36.621 HYPERVISOR: exec_cmd: hypervisor version 
+Jan 03 21:28:36.622 HYPERVISOR: exec_cmd: hypervisor working_dir C:\Users\Asus\Documents\Faculdade\2019-2020\TAR\projeto_TAR\projeto_TAR\project-files\dynamips 
+Jan 03 21:28:36.622 GENERAL: working_dir=C:\Users\Asus\Documents\Faculdade\2019-2020\TAR\projeto_TAR\projeto_TAR\project-files\dynamips
+Jan 03 21:28:36.623 HYPERVISOR: exec_cmd: hypervisor working_dir C:\Users\Asus\Documents\Faculdade\2019-2020\TAR\projeto_TAR\projeto_TAR\project-files\dynamips\3035aba6-37e5-4f79-a438-9778838e181c 
+Jan 03 21:28:36.627 GENERAL: working_dir=C:\Users\Asus\Documents\Faculdade\2019-2020\TAR\projeto_TAR\projeto_TAR\project-files\dynamips\3035aba6-37e5-4f79-a438-9778838e181c
+Jan 03 21:28:36.627 HYPERVISOR: exec_cmd: vm create R10 10 c7200 
+Jan 03 21:28:36.629 VM: VM R10 created.
+Jan 03 21:28:36.630 HYPERVISOR: exec_cmd: vm set_con_tcp_port R10 5009 
+Jan 03 21:28:36.630 HYPERVISOR: exec_cmd: c7200 get_mac_addr R10 
+Jan 03 21:28:36.630 HYPERVISOR: exec_cmd: vm get_status R10 
+Jan 03 21:28:36.630 HYPERVISOR: exec_cmd: vm slot_add_binding R10 0 0 C7200-IO-FE 
+Jan 03 21:28:36.631 HYPERVISOR: exec_cmd: vm set_disk0 R10 0 
+Jan 03 21:28:36.631 HYPERVISOR: exec_cmd: vm set_exec_area R10 64 
+Jan 03 21:28:36.631 HYPERVISOR: exec_cmd: vm get_status R10 
+Jan 03 21:28:36.632 HYPERVISOR: exec_cmd: vm set_idle_pc R10 0x60189224 
+Jan 03 21:28:36.633 HYPERVISOR: exec_cmd: vm set_ios R10 C:/Users/Asus/GNS3/images/IOS/c7200-adventerprisek9-mz.152-4.M10.image 
+Jan 03 21:28:36.633 HYPERVISOR: exec_cmd: c7200 set_mac_addr R10 ca0a.03dc.0000 
+Jan 03 21:28:36.633 HYPERVISOR: exec_cmd: vm set_nvram R10 512 
+Jan 03 21:28:36.634 HYPERVISOR: exec_cmd: vm set_ram R10 512 
+Jan 03 21:28:36.634 HYPERVISOR: exec_cmd: vm get_status R10 
+Jan 03 21:28:36.634 HYPERVISOR: exec_cmd: vm slot_add_binding R10 1 0 PA-4T+ 
+Jan 03 21:28:36.635 HYPERVISOR: exec_cmd: vm get_status R10 
+Jan 03 21:28:36.635 HYPERVISOR: exec_cmd: vm slot_add_binding R10 2 0 PA-2FE-TX 
+Jan 03 21:28:36.635 HYPERVISOR: exec_cmd: vm get_status R10 
+Jan 03 21:28:36.635 HYPERVISOR: exec_cmd: vm slot_add_binding R10 3 0 PA-2FE-TX 
+Jan 03 21:28:36.636 HYPERVISOR: exec_cmd: vm get_status R10 
+Jan 03 21:28:36.636 HYPERVISOR: exec_cmd: vm slot_add_binding R10 4 0 PA-2FE-TX 
+Jan 03 21:29:01.977 HYPERVISOR: exec_cmd: nio create_udp udp-c199b78a-5220-48f9-958f-71b4513a981f 20150 127.0.0.1 20151 
+Jan 03 21:29:02.284 HYPERVISOR: exec_cmd: vm slot_add_nio_binding R10 2 0 udp-c199b78a-5220-48f9-958f-71b4513a981f 
+Jan 03 21:29:02.285 HYPERVISOR: exec_cmd: vm get_status R10 
+Jan 03 21:29:04.990 HYPERVISOR: exec_cmd: nio create_udp udp-a4d9588a-aa69-4a38-9a35-0db4ce8ff7cd 20198 127.0.0.1 20199 
+Jan 03 21:29:04.993 HYPERVISOR: exec_cmd: vm slot_add_nio_binding R10 0 0 udp-a4d9588a-aa69-4a38-9a35-0db4ce8ff7cd 
+Jan 03 21:29:04.993 HYPERVISOR: exec_cmd: vm get_status R10 
+Jan 03 21:29:05.140 HYPERVISOR: exec_cmd: nio create_udp udp-6db646f4-4086-4396-9fc1-88bdb9ee66ba 20202 127.0.0.1 20203 
+Jan 03 21:29:05.143 HYPERVISOR: exec_cmd: vm slot_add_nio_binding R10 2 1 udp-6db646f4-4086-4396-9fc1-88bdb9ee66ba 
+Jan 03 21:29:05.144 HYPERVISOR: exec_cmd: vm get_status R10 

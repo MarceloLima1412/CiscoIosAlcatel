@@ -1,0 +1,212 @@
+#R15 liga ao Meo Internacional pela interface f0/0 pelo R14 F2/0
+-----------------------------------------------------
+	enable 
+	conf t
+
+	ipv6 unicast-routing
+
+	router ospfv3 1
+	address-family ipv4 unicast
+		router-id 15.15.15.15
+	exit-address-family	
+	address-family ipv6 unicast
+		router-id 15.15.15.16 
+	exit-address-family
+
+	interface loopback0
+	ip address 104.194.4.128 255.255.255.255
+	ipv6 address 2001:470:0:1000::1/128
+	ipv6 address FE80::15 link-local
+	ospfv3 1 ipv4 area 0
+	ospfv3 1 ipv6 area 0
+
+	interface f0/0
+	ip address 195.8.0.10 255.255.255.252
+	ipv6 address 2001:7f8:a:2::2/126
+	ipv6 address FE80::15 link-local
+	no shut
+
+	interface f2/0
+	ip address 104.194.4.1 255.255.255.252
+	ipv6 address 2001:470::1/126
+	ipv6 address FE80::15 link-local
+	ospfv3 1 ipv4 area 0
+	ospfv3 1 ipv6 area 0
+	no shut
+
+	router bgp 6939
+	bgp router-id 15.15.15.15
+	bgp log-neighbor-changes
+
+	neighbor 2001:470:0:1000::2 remote-as 6939  
+	neighbor 2001:470:0:1000::2 update-source Loopback0
+	neighbor 2001:7f8:a:2::1 remote-as 8657
+
+	neighbor 104.194.4.129 remote-as 6939 
+	neighbor 104.194.4.129 update-source Loopback0
+	neighbor 195.8.0.9 remote-as 8657
+
+	address-family ipv6 
+	neighbor 2001:470:0:1000::2 activate
+	neighbor 2001:470:0:1000::2 next-hop-self
+	neighbor 2001:7f8:a:2::1 activate
+	redistribute static
+	exit-address-family
+
+	address-family ipv4 
+	neighbor 104.194.4.129 activate
+	neighbor 104.194.4.129 next-hop-self
+	neighbor 195.8.0.9 activate
+	redistribute static
+	exit-address-family
+
+	exit
+
+	ip route 104.194.4.0 255.255.255.0 Null0
+	ipv6 route 2001:470::/32 Null0
+	
+	exit
+
+
+#R16
+------------------------------------------------------
+	enable 
+	conf t
+
+	ipv6 unicast-routing
+
+	router ospfv3 1
+	address-family ipv4 unicast
+		router-id 16.16.16.16
+	exit-address-family	
+	address-family ipv6 unicast
+		router-id 16.16.16.17
+	exit-address-family	
+	
+	interface loopback0
+	ip address 104.194.4.129 255.255.255.255
+	ipv6 address 2001:470:0:1000::2/128
+	ipv6 address FE80::16 link-local
+	ospfv3 1 ipv4 area 0
+	ospfv3 1 ipv6 area 0
+
+
+	interface f0/0
+	ip address 104.194.4.2 255.255.255.252
+	ipv6 address 2001:470::2/126
+	ipv6 address FE80::16 link-local
+	ospfv3 1 ipv4 area 0
+	ospfv3 1 ipv6 area 0
+	no shut
+
+	interface f2/0
+	ip address 104.194.4.5 255.255.255.252
+	ipv6 address 2001:470:0:1::1/126
+	ipv6 address FE80::16 link-local
+	ospfv3 1 ipv4 area 0
+	ospfv3 1 ipv6 area 0
+	no shut
+
+	router bgp 6939
+	bgp router-id 16.16.16.16
+	bgp log-neighbor-changes
+
+	neighbor 2001:470:0:1000::1 remote-as 6939 
+	neighbor 2001:470:0:1000::1 update-source Loopback0
+	neighbor 2001:470:0:1000::3 remote-as 6939 
+	neighbor 2001:470:0:1000::3 update-source Loopback0
+	
+	neighbor 104.194.4.128 remote-as 6939
+	neighbor 104.194.4.128 update-source Loopback0
+	neighbor 104.194.4.130 remote-as 6939 
+	neighbor 104.194.4.130 update-source Loopback0
+
+	address-family ipv6 
+	neighbor 2001:470:0:1000::1 activate
+	neighbor 2001:470:0:1000::1 route-reflector-client
+	neighbor 2001:470:0:1000::3 activate
+	neighbor 2001:470:0:1000::3 route-reflector-client
+	exit-address-family
+
+	address-family ipv4 
+	neighbor 104.194.4.128 activate
+	neighbor 104.194.4.128 route-reflector-client
+	neighbor 104.194.4.130 activate
+	neighbor 104.194.4.130 route-reflector-client
+	exit-address-family
+
+	exit
+
+
+#R17 liga ao Vodafone pela interface f2/0 pelo R18 F0/0
+------------------------------------------------------
+	enable 
+	conf t
+
+	ipv6 unicast-routing
+
+	router ospfv3 1
+	address-family ipv4 unicast
+		router-id 17.17.17.17
+	exit-address-family	
+	address-family ipv6 unicast
+		router-id 17.17.17.18 
+	exit-address-family	 
+	
+	
+	interface loopback0
+	ip address 104.194.4.130 255.255.255.255
+	ipv6 address 2001:470:0:1000::3/128
+	ipv6 address FE80::17 link-local
+	ospfv3 1 ipv4 area 0
+	ospfv3 1 ipv6 area 0
+
+
+	interface f0/0
+	ip address 104.194.4.6 255.255.255.252
+	ipv6 address 2001:470:0:1::2/126
+	ipv6 address FE80::17 link-local
+	ospfv3 1 ipv4 area 0
+	ospfv3 1 ipv6 area 0
+	no shut
+
+	interface f2/0
+	ip address 104.194.4.9 255.255.255.252
+	ipv6 address 2001:7f8:a:3::1/126
+	ipv6 address FE80::17 link-local
+	no shut
+
+	router bgp 6939
+	bgp router-id 17.17.17.17
+	bgp log-neighbor-changes
+
+	neighbor 2001:470:0:1000::2 remote-as 6939 
+	neighbor 2001:470:0:1000::2 update-source Loopback0
+	neighbor 2001:7f8:a:3::2 remote-as 12353
+
+	neighbor 104.194.4.129 remote-as 6939 
+	neighbor 104.194.4.129 update-source Loopback0
+	neighbor 104.194.4.10 remote-as 12353
+
+	address-family ipv6 
+	neighbor 2001:470:0:1000::2 activate
+	neighbor 2001:470:0:1000::2 next-hop-self
+	neighbor 2001:7f8:a:3::2 activate
+	redistribute static
+	exit-address-family
+
+	address-family ipv4 
+	neighbor 104.194.4.129 activate
+	neighbor 104.194.4.129 next-hop-self
+	neighbor 104.194.4.10 activate
+	redistribute static
+	exit-address-family
+
+	exit
+
+	ipv6 route 2001:470::/32 Null0
+	ip route 104.194.4.0 255.255.255.0 Null0
+
+	exit
+
+	debug ip bgp 104.194.4.10 updates

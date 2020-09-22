@@ -1,0 +1,44 @@
+Nov 12 15:22:38.703 HYPERVISOR: Release 0.2.17-x86/Windows (tag 2017072410)
+Nov 12 15:22:38.705 HYPERVISOR: Started on IP = 192.168.56.1, TCP port = 52423.
+Nov 12 15:22:39.182 HYPERVISOR: exec_cmd: hypervisor version 
+Nov 12 15:22:39.182 HYPERVISOR: exec_cmd: hypervisor working_dir C:\Users\Asus\Desktop\projeto_TAR\project-files\dynamips 
+Nov 12 15:22:39.182 GENERAL: working_dir=C:\Users\Asus\Desktop\projeto_TAR\project-files\dynamips
+Nov 12 15:22:39.183 HYPERVISOR: exec_cmd: hypervisor working_dir C:\Users\Asus\Desktop\projeto_TAR\project-files\dynamips\1f69cd36-37d0-4042-9662-901ef4c2724e 
+Nov 12 15:22:39.183 GENERAL: working_dir=C:\Users\Asus\Desktop\projeto_TAR\project-files\dynamips\1f69cd36-37d0-4042-9662-901ef4c2724e
+Nov 12 15:22:39.184 HYPERVISOR: exec_cmd: vm create R22 22 c7200 
+Nov 12 15:22:39.186 VM: VM R22 created.
+Nov 12 15:22:39.187 HYPERVISOR: exec_cmd: vm set_con_tcp_port R22 5021 
+Nov 12 15:22:39.187 HYPERVISOR: exec_cmd: c7200 get_mac_addr R22 
+Nov 12 15:22:39.187 HYPERVISOR: exec_cmd: vm get_status R22 
+Nov 12 15:22:39.188 HYPERVISOR: exec_cmd: vm slot_add_binding R22 0 0 C7200-IO-FE 
+Nov 12 15:22:39.188 HYPERVISOR: exec_cmd: vm set_disk0 R22 0 
+Nov 12 15:22:39.189 HYPERVISOR: exec_cmd: vm set_exec_area R22 64 
+Nov 12 15:22:39.189 HYPERVISOR: exec_cmd: vm get_status R22 
+Nov 12 15:22:39.189 HYPERVISOR: exec_cmd: vm set_idle_pc R22 0x60189224 
+Nov 12 15:22:39.190 HYPERVISOR: exec_cmd: vm set_ios R22 C:/Users/Asus/GNS3/images/IOS/c7200-adventerprisek9-mz.152-4.M10.image 
+Nov 12 15:22:39.191 HYPERVISOR: exec_cmd: c7200 set_mac_addr R22 ca16.489c.0000 
+Nov 12 15:22:39.191 HYPERVISOR: exec_cmd: vm set_nvram R22 512 
+Nov 12 15:22:39.191 HYPERVISOR: exec_cmd: vm set_ram R22 512 
+Nov 12 15:22:39.192 HYPERVISOR: exec_cmd: vm get_status R22 
+Nov 12 15:22:39.192 HYPERVISOR: exec_cmd: vm slot_add_binding R22 1 0 PA-4T+ 
+Nov 12 15:22:39.192 HYPERVISOR: exec_cmd: vm get_status R22 
+Nov 12 15:22:39.192 HYPERVISOR: exec_cmd: vm slot_add_binding R22 2 0 PA-2FE-TX 
+Nov 12 15:22:39.193 HYPERVISOR: exec_cmd: vm get_status R22 
+Nov 12 15:22:39.193 HYPERVISOR: exec_cmd: vm slot_add_binding R22 3 0 PA-2FE-TX 
+Nov 12 15:22:39.193 HYPERVISOR: exec_cmd: vm get_status R22 
+Nov 12 15:22:39.194 HYPERVISOR: exec_cmd: vm slot_add_binding R22 4 0 PA-2FE-TX 
+Nov 12 15:22:52.536 HYPERVISOR: exec_cmd: nio create_udp udp-0b0c1d0c-f850-47f4-82d4-ca441f46efbd 20168 127.0.0.1 20169 
+Nov 12 15:22:52.837 HYPERVISOR: exec_cmd: vm slot_add_nio_binding R22 0 0 udp-0b0c1d0c-f850-47f4-82d4-ca441f46efbd 
+Nov 12 15:22:52.837 HYPERVISOR: exec_cmd: vm get_status R22 
+Nov 12 15:22:52.981 HYPERVISOR: exec_cmd: nio create_udp udp-91ad5e57-25d7-4be5-aee6-f3f1218498ae 20174 127.0.0.1 20175 
+Nov 12 15:22:52.984 HYPERVISOR: exec_cmd: vm slot_add_nio_binding R22 2 0 udp-91ad5e57-25d7-4be5-aee6-f3f1218498ae 
+Nov 12 15:22:52.985 HYPERVISOR: exec_cmd: vm get_status R22 
+Nov 12 17:55:06.907 HYPERVISOR: exec_cmd: vm get_status R22 
+Nov 12 17:55:06.911 HYPERVISOR: exec_cmd: vm extract_config R22 
+Nov 12 17:55:07.267 HYPERVISOR: exec_cmd: vm get_status R22 
+Nov 12 17:55:07.267 HYPERVISOR: exec_cmd: vm extract_config R22 
+Nov 12 17:55:07.267 HYPERVISOR: exec_cmd: vm delete R22 
+Nov 12 17:55:07.267 VM: VM R22 destroyed.
+Nov 12 17:55:07.275 HYPERVISOR: exec_cmd: hypervisor stop 
+Nov 12 17:55:07.523 HYPERVISOR: Stopped.
+Nov 12 17:55:07.523 GENERAL: reset done.

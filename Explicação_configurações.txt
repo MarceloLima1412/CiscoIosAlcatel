@@ -1,0 +1,36 @@
+OPFSV3 (IPV6/IPV4):
+As areas configuradas do ospf (são iguais tanto para ipv4 como para ipv6), estão identificadas dentro do gns.
+
+Foi configurado o ospf ipv6 e ipv4 em simultaneo no Hurricane e o independente nos restantes.
+
+Foi implementada a redistribuição no R26 e no R27.
+
+BGP:
+
+As ligações eBGP foram configuradas tendo em conta os seguintes routers e as suas seguintes interfaces:
+
+R1 fa2/1
+R12 fa0/0
+R14 fa2/0
+R15 fa0/0
+R17 fa2/0
+R18 fa0/0
+R20 fa2/0
+R7 fa2/1
+
+As ligações iBGP:
+
+No Hurricane: R16 serve de route reflector e o R15 e o R17 estão a comunicar com ele
+Na Vodafone: R19 serve de route reflector e o R18 e o R20 estão a comunicar com ele
+Na Meo Internacional: R13 serve de route reflector e o R12 e o R14 estão a comunicar com ele
+
+No TIER3 (e portanto Meo Regional e AS100LIMITES): R26 e R27 servem de route reflector e os restantes routers comunicam com eles.
+
+ENDEREÇAMENTO:
+
+Meo Regional - 212.55.128.0/19 foi dividido em duas sub-redes /25:
+	- 212.55.128.0/25 para as interligações entre routers;
+	- 212.55.128.128/25 para as loopbacks;
+
+As restantes AS's foram subdivididas da mesma forma.
+

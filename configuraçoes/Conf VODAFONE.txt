@@ -1,0 +1,205 @@
+#R18 liga ao Hurricane pela interface f0/0 pelo R17 F2/0
+------------------------------------------------------
+	enable 
+	conf t
+
+	ipv6 unicast-routing
+
+	router ospf 1
+	router-id 18.18.18.18
+
+	ipv6 router ospf 2
+	router-id 18.18.18.19 
+
+	interface loopback0
+	ip address 178.166.0.128 255.255.255.255
+	ip ospf 1 area 0
+	ipv6 address 2001:818:0:1000::1/128
+	ipv6 address FE80::18 link-local
+	ipv6 ospf 2 area 0
+
+
+	interface f0/0
+	ip address 104.194.4.10 255.255.255.252
+	ipv6 address 2001:7f8:a:3::2/126
+	ipv6 address FE80::18 link-local
+	no shut
+
+	interface f2/0
+	ip address 178.166.0.1 255.255.255.252
+	ip ospf 1 area 0
+	ipv6 address 2001:818::1/126
+	ipv6 address FE80::18 link-local
+	ipv6 ospf 2 area 0
+	no shut
+	
+	router bgp 12353
+	bgp router-id 18.18.18.18
+	bgp log-neighbor-changes
+
+	neighbor 2001:818:0:1000::2 remote-as 12353
+	neighbor 2001:818:0:1000::2 update-source Loopback0
+	neighbor 2001:7f8:a:3::1 remote-as 6939
+	
+	neighbor 178.166.0.129 remote-as 12353 
+	neighbor 178.166.0.129 update-source Loopback0
+	neighbor 104.194.4.9 remote-as 6939
+
+	address-family ipv6 
+	neighbor 2001:818:0:1000::2 activate
+	neighbor 2001:818:0:1000::2 next-hop-self
+	neighbor 2001:7f8:a:3::1 activate
+	redistribute static
+	exit-address-family
+	
+	address-family ipv4
+	neighbor 178.166.0.129 activate
+	neighbor 178.166.0.129 next-hop-self
+	neighbor debug  activate
+	redistribute static
+	exit-address-family
+
+	exit
+
+	ipv6 route 2001:818::/29 Null0
+	ip route 178.166.0.0 255.255.128.0 Null0
+
+	exit
+
+	debug ip bgp 104.194.4.9 updates 
+
+#R19
+------------------------------------------------------
+	enable 
+	conf t
+
+	ipv6 unicast-routing
+	
+	router ospf 1
+	router-id 19.19.19.19
+
+	ipv6 router ospf 2
+	router-id 19.19.19.20 
+	
+	interface loopback0
+	ip address 178.166.0.129 255.255.255.255
+	ip ospf 1 area 0
+	ipv6 address 2001:818:0:1000::2/128
+	ipv6 address FE80::19 link-local
+	ipv6 ospf 2 area 0
+
+
+	interface f0/0
+	ip address 178.166.0.2 255.255.255.252
+	ip ospf 1 area 0
+	ipv6 address 2001:818::2/126
+	ipv6 address FE80::19 link-local
+	ipv6 ospf 2 area 0
+	no shut
+
+	interface f2/0
+	ip address 178.166.0.5 255.255.255.252
+	ip ospf 1 area 0
+	ipv6 address 2001:818:0:1::1/126
+	ipv6 address FE80::19 link-local
+	ipv6 ospf 2 area 0
+	no shut
+
+	router BGP 12353 
+	bgp router-id 19.19.19.19
+	bgp log-neighbor-changes
+
+	neighbor 2001:818:0:1000::1 remote-as 12353
+	neighbor 2001:818:0:1000::3 remote-as 12353
+	neighbor 2001:818:0:1000::1 update-source Loopback0 
+	neighbor 2001:818:0:1000::3 update-source Loopback0 
+
+	neighbor 178.166.0.128 remote-as 12353
+	neighbor 178.166.0.130 remote-as 12353
+	neighbor 178.166.0.128 update-source Loopback0
+	neighbor 178.166.0.130 update-source Loopback0
+
+	address-family ipv6
+	neighbor 2001:818:0:1000::1 activate
+	neighbor 2001:818:0:1000::1 route-reflector-client
+	neighbor 2001:818:0:1000::3 activate
+	neighbor 2001:818:0:1000::3 route-reflector-client 
+	exit-address-family
+
+	address-family ipv4
+	neighbor 178.166.0.128 activate
+	neighbor 178.166.0.130 activate
+	neighbor 178.166.0.128 route-reflector-client
+	neighbor 178.166.0.130 route-reflector-client
+	exit-address-family
+
+	exit
+
+
+#R20 liga ao AS100Limite pela interface f2/0 pelo R7 F2/1
+------------------------------------------------------
+	enable 
+	conf t
+
+	ipv6 unicast-routing
+
+	router ospf 1
+	router-id 20.20.20.20
+
+	ipv6 router ospf 2
+	router-id 20.20.20.21 
+	
+	interface loopback0
+	ip address 178.166.0.130 255.255.255.255
+	ip ospf 1 area 0
+	ipv6 address 2001:818:0:1000::3/128
+	ipv6 address FE80::20 link-local
+	ipv6 ospf 2 area 0
+
+
+	interface f0/0
+	ip address 178.166.0.6 255.255.255.252
+	ip ospf 1 area 0
+	ipv6 address 2001:818:0:1::2/126
+	ipv6 address FE80::20 link-local
+	ipv6 ospf 2 area 0
+	no shut
+
+	interface f2/0
+	ip address 185.83.248.10 255.255.255.252
+	ipv6 address 2001:7f8:a:4::1/126
+	ipv6 address FE80::20 link-local
+	no shut
+
+	router BGP 12353 
+	bgp router-id 20.20.20.20
+	bgp log-neighbor-changes
+
+	neighbor 2001:818:0:1000::2 remote-as 12353
+	neighbor 2001:7f8:a:4::2 remote-as 3243 
+	neighbor 2001:818:0:1000::2 update-source Loopback0 
+
+
+	neighbor 178.166.0.129 remote-as 12353
+	neighbor 185.83.248.9 remote-as 3243
+	neighbor 178.166.0.129 update-source Loopback0
+
+
+	address-family ipv6
+	neighbor 2001:818:0:1000::2 activate
+	neighbor 2001:818:0:1000::2 next-hop-self
+	neighbor 2001:7f8:a:4::2 activate
+	redistribute static 
+	exit-address-family
+
+	address-family ipv4
+	neighbor 178.166.0.129 activate
+	neighbor 185.83.248.9 activate
+	neighbor 178.166.0.129 next-hop-self
+	redistribute static 
+	exit-address-family
+
+	ipv6 route 2001:818::/29 Null0
+	ip route 178.166.0.0 255.255.128.0 Null0
+
+	exit

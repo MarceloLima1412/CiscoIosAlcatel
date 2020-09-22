@@ -1,0 +1,203 @@
+#R12 liga ao Meo Regional pela interface f0/0 pelo R1 F2/1
+----------------------------------------------------------
+	enable 
+	conf t
+
+	ipv6 unicast-routing
+
+	router ospf 1
+	router-id 12.12.12.12
+
+	ipv6 router ospf 2
+	router-id 12.12.12.13 
+
+	interface loopback0 
+	ip address 195.8.0.128 255.255.255.255
+	ip ospf 1 area 0
+	ipv6 address 2001:15d8:0:1000::1/128
+	ipv6 address FE80::12 link-local
+	ipv6 ospf 2 area 0
+
+
+	interface f0/0
+	ip address 212.55.128.10 255.255.255.252
+	ipv6 address 2001:7f8:a:1::2/126
+	ipv6 address FE80::12 link-local
+	no shut
+
+	interface f2/0
+	ip address 195.8.0.1 255.255.255.252
+	ip ospf 1 area 0
+	ipv6 address 2001:15d8::1/126
+	ipv6 address FE80::12 link-local
+	ipv6 ospf 2 area 0
+	no shut
+
+	router BGP 8657 
+	bgp router-id 12.12.12.12
+	bgp log-neighbor-changes
+
+	neighbor 2001:7f8:a:1::1 remote-as 3243
+	neighbor 2001:15d8:0:1000::2 remote-as 8657
+	neighbor 2001:15d8:0:1000::2 update-source Loopback0
+
+	neighbor 212.55.128.9 remote-as 3243
+	neighbor 195.8.0.129 remote-as 8657 
+	neighbor 195.8.0.129 update-source Loopback0 
+
+	address-family ipv6
+	neighbor 2001:7f8:a:1::1 activate
+	neighbor 2001:15d8:0:1000::2 activate
+	neighbor 2001:15d8:0:1000::2 next-hop-self
+	redistribute static 
+	exit-address-family
+
+	address-family ipv4
+	neighbor 212.55.128.9 activate
+	neighbor 195.8.0.129 activate
+	neighbor 195.8.0.129 next-hop-self
+	redistribute static 
+	exit-address-family
+
+	exit
+
+	ipv6 route 2001:15d8::/32 Null0
+	ip route 195.8.0.0 255.255.224.0 Null0
+
+
+#R13
+----------------------------------------------------------
+	enable 
+	conf t
+
+	ipv6 unicast-routing
+	
+	router ospf 1
+	router-id 13.13.13.13
+
+	ipv6 router ospf 2
+	router-id 13.13.13.14 
+
+	interface loopback0
+	ip address 195.8.0.129 255.255.255.255
+	ip ospf 1 area 0
+	ipv6 address 2001:15d8:0:1000::2/128
+	ipv6 address FE80::13 link-local
+	ipv6 ospf 2 area 0
+
+	interface f0/0
+	ip address 195.8.0.2 255.255.255.252
+	ip ospf 1 area 0
+	ipv6 address 2001:15d8::2/126
+	ipv6 address FE80::13 link-local
+	ipv6 ospf 2 area 0
+	no shut
+
+	interface f2/0
+	ip address 195.8.0.5 255.255.255.252
+	ip ospf 1 area 0
+	ipv6 address 2001:15d8:0:1::1/126 
+	ipv6 address FE80::13 link-local
+	ipv6 ospf 2 area 0
+	no shut
+
+
+	router BGP 8657 
+	bgp router-id 13.13.13.13
+	bgp log-neighbor-changes
+
+	neighbor 2001:15d8:0:1000::1 remote-as 8657
+	neighbor 2001:15d8:0:1000::3 remote-as 8657
+	neighbor 2001:15d8:0:1000::1 update-source Loopback0 
+	neighbor 2001:15d8:0:1000::3 update-source Loopback0 
+
+	neighbor 195.8.0.128 remote-as 8657
+	neighbor 195.8.0.130 remote-as 8657
+	neighbor 195.8.0.128 update-source Loopback0
+	neighbor 195.8.0.130 update-source Loopback0
+
+	address-family ipv6
+	neighbor 2001:15D8:0:1000::1 activate
+  	neighbor 2001:15D8:0:1000::1 route-reflector-client
+  	neighbor 2001:15D8:0:1000::3 activate
+  	neighbor 2001:15D8:0:1000::3 route-reflector-client
+	exit-address-family
+
+	address-family ipv4
+	neighbor 195.8.0.128 activate
+	neighbor 195.8.0.130 activate
+	neighbor 195.8.0.128 route-reflector-client
+	neighbor 195.8.0.130 route-reflector-client
+	exit-address-family
+
+	exit
+
+#R14 liga ao Hurricane pela interface f2/0 pelo R15 F0/0
+----------------------------------------------------
+	enable 
+	conf t
+
+	ipv6 unicast-routing
+	
+	router ospf 1
+	router-id 14.14.14.14
+
+	ipv6 router ospf 2
+	router-id 14.14.14.15 
+
+	interface loopback0
+	ip address 195.8.0.130 255.255.255.255
+	ip ospf 1 area 0
+	ipv6 address 2001:15d8:0:1000::3/128
+	ipv6 address FE80::14 link-local
+	ipv6 ospf 2 area 0
+
+
+	interface f0/0
+	ip address 195.8.0.6 255.255.255.252
+	ip ospf 1 area 0
+	ipv6 address 2001:15d8:0:1::2/126
+	ipv6 address FE80::14 link-local
+	ipv6 ospf 2 area 0
+	no shut
+
+	interface f2/0
+	ip address 195.8.0.9 255.255.255.252
+	ipv6 address 2001:7f8:a:2::1/126
+	ipv6 address FE80::14 link-local
+	no shut
+
+	router BGP 8657 
+	bgp router-id 14.14.14.14
+	bgp log-neighbor-changes
+
+	neighbor 2001:7f8:a:2::2 remote-as 6939
+	neighbor 2001:15d8:0:1000::2 remote-as 8657	
+	neighbor 2001:15d8:0:1000::2 update-source Loopback0 
+
+	neighbor 195.8.0.10 remote-as 6939
+	neighbor 195.8.0.129 remote-as 8657
+	neighbor 195.8.0.129 update-source Loopback0 
+
+	address-family ipv6
+	neighbor 2001:7f8:a:2::2 activate
+	neighbor 2001:15d8:0:1000::2 activate
+	neighbor 2001:15d8:0:1000::2 next-hop-self
+	redistribute static 
+	exit-address-family
+
+	address-family ipv4
+	neighbor 195.8.0.10 activate
+	neighbor 195.8.0.129 activate
+	neighbor 195.8.0.129 next-hop-self
+	redistribute static
+	exit-address-family
+
+	exit
+
+	ipv6 route 2001:15d8::/32 Null0
+	ip route 195.8.0.0 255.255.224.0 Null0
+
+	exit
+
+	debug ip bgp 195.8.0.10 updates

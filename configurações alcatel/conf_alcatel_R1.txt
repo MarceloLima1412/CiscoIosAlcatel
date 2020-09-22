@@ -1,0 +1,136 @@
+
+#ROUTER CISCO
+
+		hostname R1
+		!
+		boot-start-marker
+		boot-end-marker
+		!
+		!
+		!
+		no aaa new-model
+		no ip icmp rate-limit unreachable
+		!
+		!
+		!
+		ip vrf VPN
+		 rd 3243:1
+		 route-target export 3243:1
+		 route-target import 3243:1
+		!
+		!
+		!
+		!
+		no ip domain lookup
+		ip cef
+		no ipv6 cef
+		!
+		multilink bundle-name authenticated
+		mpls label range 900 950
+		!
+		!
+		!
+		!
+		!
+		!
+		!
+		!
+		!
+		!
+		redundancy
+		!
+		!
+		ip tcp synwait-time 5
+		!
+		!
+		!
+		!
+		!
+		!
+		!
+		!
+		!
+		!
+		interface Loopback1
+		 ip vrf forwarding VPN
+		 ip address 9.9.9.9 255.255.255.255
+		 no shutdown
+		!
+		interface FastEthernet0/0
+		 ip vrf forwarding VPN
+		 ip address 185.83.248.33 255.255.255.252
+		 no shutdown
+		 duplex half
+		 mpls ip
+		!
+		ip forward-protocol nd
+		no ip http server
+		no ip http secure-server
+		!
+		!
+		ip route vrf VPN 192.168.0.8 255.255.255.252 185.83.248.34
+		!
+		no cdp log mismatch duplex
+		!
+		!
+		!
+		control-plane
+		!
+		!
+		!
+		mgcp profile default
+		!
+		!
+		!
+		gatekeeper
+		 shutdown
+		!
+		!
+		line con 0
+		 exec-timeout 0 0
+		 privilege level 15
+		 logging synchronous
+		 stopbits 1
+		line aux 0
+		 exec-timeout 0 0
+		 privilege level 15
+		 logging synchronous
+		 stopbits 1
+		line vty 0 4
+		 login
+		 transport input all
+		!
+		!
+		end
+
+		R1(config)#
+
+#R23-alcatel
+
+	conf
+	router
+	interface "cisco"
+	address 185.83.248.34/30
+	port 1/2/2
+	no sh	
+
+	interface "pc"
+	address 192.168.0.9/30
+	port 1/2/1
+	no sh	
+
+	static-route 0.0.0.0/0 next-hop 185.83.248.33
+
+Nota: caso as portas estejam em baixo, é necessário fazer:
+	conf
+	port X -> X é o número da porta
+	shut
+	ethernet
+	mode network
+	no shut
+
+Nota2: caso as portas esteham a ser usadas, é necessário fazer:
+	conf
+	router
+	interface "X" -> C é o nome da interface
+	no port
